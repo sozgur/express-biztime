@@ -33,11 +33,11 @@ describe("GET /companies/:code", function () {
             `/companies/${testCompany.code}`
         );
         expect(response.statusCode).toEqual(200);
-        expect(response.body).toEqual({ company: testCompany });
+        expect(response.body).toEqual({ company: testCompany, invoices: [] });
     });
 
     test("Responds with 404 if can't find company", async function () {
-        const response = await request(app).get(`/companies/0`);
+        const response = await request(app).get(`/companies/apple`);
         expect(response.statusCode).toEqual(404);
     });
 });

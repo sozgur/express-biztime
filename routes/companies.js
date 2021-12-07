@@ -31,7 +31,15 @@ router.get("/:code", async function (req, res, next) {
             );
         }
 
-        return res.json({ company: companyQuery.rows[0] });
+        const invoices = await db.query(
+            `SELECT id FROM invoices WHERE comp_code=$1 ORDER BY id`,
+            [req.params.code]
+        );
+
+        return res.json({
+            company: companyQuery.rows[0],
+            invoices: invoices.rows,
+        });
     } catch (err) {
         next(err);
     }
@@ -59,7 +67,7 @@ router.post("/", async function (req, res, next) {
     }
 });
 
-// edit exiting cpmpany
+// edit existing cpmpany
 router.put("/:code", async function (req, res, next) {
     try {
         if (req.body.code) {
