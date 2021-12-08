@@ -19,7 +19,7 @@ router.get("/", async function (req, res, next) {
 router.get("/:id", async function (req, res, next) {
     try {
         const result = await db.query(
-            `SELECT i.id, i.amt, i.paid, i.add_date, i.paid_date, c.name, c.description
+            `SELECT i.id, i.amt, i.paid, i.add_date, i.paid_date, c.code, c.name, c.description
             FROM invoices AS i INNER JOIN companies AS c ON i.comp_code = c.code 
             WHERE id=$1`,
             [req.params.id]
@@ -41,11 +41,11 @@ router.get("/:id", async function (req, res, next) {
                 paid: data.paid,
                 add_date: data.add_date,
                 paid_date: data.paid_date,
-            },
-            company: {
-                code: data.code,
-                name: data.name,
-                description: data.description,
+                company: {
+                    code: data.code,
+                    name: data.name,
+                    description: data.description,
+                },
             },
         });
     } catch (err) {
