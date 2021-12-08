@@ -33,7 +33,15 @@ describe("GET /companies/:code", function () {
             `/companies/${testCompany.code}`
         );
         expect(response.statusCode).toEqual(200);
-        expect(response.body).toEqual({ company: testCompany, invoices: [] });
+        expect(response.body).toEqual({
+            company: {
+                code: testCompany.code,
+                name: testCompany.name,
+                description: testCompany.description,
+                invoices: [],
+                industries: [],
+            },
+        });
     });
 
     test("Responds with 404 if can't find company", async function () {

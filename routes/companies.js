@@ -19,27 +19,44 @@ router.get("/", async function (req, res, next) {
 // gets a specific obj of companies
 router.get("/:code", async function (req, res, next) {
     try {
-        const companyQuery = await db.query(
-            `SELECT code, name, description
-            FROM companies WHERE code=$1`,
+        const results = await db.query(
+            `SELECT c.code, c.name, c.description, i.industry
+            FROM companies AS c
+            LEFT JOIN companies_industries AS ci 
+            ON ci.company_code = c.code
+            LEFT JOIN industries AS i
+            ON ci.industry_code = i.code
+            WHERE c.code = $1`,
             [req.params.code]
         );
 
-        if (companyQuery.rows.length === 0) {
+        if (results.rows.length === 0) {
             throw new ExpressError(
                 `There is no company with code ${req.params.code}`,
                 404
             );
         }
 
+        const { code, name, description } = results.rows[0];
+        let industries = results.rows.map((r) => r.industry);
+
+        if (!industries[0]) {
+            industries.length = 0;
+        }
+
         const invoices = await db.query(
             `SELECT id FROM invoices WHERE comp_code=$1 ORDER BY id`,
-            [req.params.code]
+            [code]
         );
 
         return res.json({
-            company: companyQuery.rows[0],
-            invoices: invoices.rows,
+            company: {
+                code: code,
+                name: name,
+                description: description,
+                invoices: invoices.rows,
+                industries: industries,
+            },
         });
     } catch (err) {
         next(err);
