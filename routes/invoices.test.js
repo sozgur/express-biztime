@@ -93,14 +93,16 @@ describe("POST /invoices", function () {
 describe("PUT /invoices/:id", function () {
     test("Updates a single invoice", async function () {
         const response = await request(app)
-            .put(`/invoices/${testInvoices[1].id}`)
+            .put(`/invoices/${testInvoices[0].id}`)
             .send({
-                amt: 100,
+                amt: 1000,
+                paid: false,
             });
 
-        // console.log(testInvoices[1].id);
-        // expect(response.statusCode).toEqual(200);
-        // // expect(response.body.invoice.amt).toEqual(1000);
+        console.log(testInvoices[0].id);
+        expect(response.statusCode).toEqual(200);
+        expect(response.body.invoice.amt).toEqual(1000);
+        expect(response.body.invoice.paid_date).toEqual(null);
     });
 
     test("Responds with 404 if can't find invoice", async function () {

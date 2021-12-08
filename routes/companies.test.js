@@ -45,7 +45,6 @@ describe("GET /companies/:code", function () {
 describe("POST /companies", function () {
     test("Creates a new company", async function () {
         const response = await request(app).post(`/companies`).send({
-            code: "meta",
             name: "Meta",
             description: "Facebook company",
         });
